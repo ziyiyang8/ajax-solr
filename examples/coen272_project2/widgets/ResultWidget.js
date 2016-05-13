@@ -10,12 +10,10 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		  }
 		},
 
-		template: function (doc) {
-		  var url = doc.id.substring(doc.id.lastIndexOf('/') + 1);
-			
-		  var output = '<div><h2><a href=' + doc.id + '\>' + doc.title + '</a></h2>';
+		template: function (doc) {		  
+		  var output = '<div><h2><a href=' + doc.url + '\>' + doc.title + '</a></h2>';
 		  //output += '<p id="links_' + doc.id + '" class="links"></p>';
-		  output += '<a href=' + doc.id + '\>' + url + '</a>';
+		  output += '<a href=' + doc.url + '\>' + doc.url + '</a>';
 		  output += '<p>' + doc.description + '</p></div>';
 		  return output;
 		}

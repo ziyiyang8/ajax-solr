@@ -25,7 +25,7 @@ var Manager;
     	  target: '#search'
     	}));
     Manager.init();
-    Manager.store.addByValue('q', '*:*');
+    Manager.store.addByValue('q', '');
     Manager.doRequest();
   });
   
