@@ -129,7 +129,7 @@ public class WebCrawler {
 			// add url to our visited set
 			pagesVisited.add(url);
 			// only connect if safe to crawl based on robots.txt and our domain
-			if (domainSafe(url))
+			if (pagesVisited.size() <= 1 || domainSafe(url))
 			{
 				try {
 					System.out.println("Crawling... " + url);
@@ -178,6 +178,20 @@ public class WebCrawler {
 						}
 						if (!metaUrlFlag)
 							page.head().appendElement("meta").attr("property", "url").attr("content", url);
+						
+						// PHONEARENA.COM
+						page.head().appendElement("meta").attr("property", "brands").attr("content", "Samsung");
+						String text = page.body().text();
+						String camera = null;
+						if  (text.indexOf("Camera:") != -1)
+						{
+							 int index = text.indexOf("Camera:");
+							 camera = text.substring(index + "Camera:".length(), text.indexOf("megapixels", index));
+							 page.head().appendElement("meta").attr("property", "cameras").attr("content", camera.trim() + " MP");
+						}
+						else
+							page.head().appendElement("meta").attr("property", "cameras").attr("content", "None");
+						
 						// get all textual content of the page
 						String textContent = page.outerHtml();
 								
