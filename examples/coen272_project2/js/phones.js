@@ -28,18 +28,24 @@ var Manager;
     	  id: 'text',
     	  target: '#search'
     	}));
+    // remember values when going back on page
+    Manager.setStore(new AjaxSolr.ParameterHashStore());
+    Manager.store.exposed = [ 'fq', 'q', 'start' ];
     Manager.init();
     Manager.store.addByValue('q', '');
     Manager.doRequest();
 
     var fields = [ 'brands', 'cameras' ];
     for (var i = 0, l = fields.length; i < l; i++) {
-      Manager.addWidget(new AjaxSolr.TagcloudWidget({
-        id: fields[i],
-        target: '#' + fields[i],
-        field: fields[i]
-      }));
-    }
+        Manager.addWidget(new AjaxSolr.MultiSelectWidget({ //MultiSelectWidget instead of Tagcloudwidget
+            id: fields[i],
+            target: '#' + fields[i],
+    	field: fields[i],
+    	max_show: 10,
+    	max_facets: 20,
+    	sort_type: 'count' //possible values: 'range', 'lex', 'count'
+          }));
+        }
     
     var params = {
     		  facet: true,

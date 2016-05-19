@@ -10,11 +10,18 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		  }
 		},
 
-		template: function (doc) {		  
-		  var output = '<div><h2><a href=' + doc.url + '\>' + doc.title + '</a></h2>';
+		template: function (doc) {	
+		  // limit snippet to first 150 characters
+		  var snippet;
+		  if (doc.description === undefined)
+			  snippet = "";
+		  else
+			  snippet = doc.description.toString().substring(0,150);
+			
+		  var output = '<div><h2><a href=' + doc.url + ' target="_blank"' + '\>' + doc.title + '</a></h2>';
 		  //output += '<p id="links_' + doc.id + '" class="links"></p>';
-		  output += '<a href=' + doc.url + '\>' + doc.url + '</a>';
-		  output += '<p>' + doc.description + '</p></div>';
+		  output += '<a href=' + doc.url + ' target="_blank"' + '\>' + doc.url + '</a>';
+		  output += '<p>' + snippet + '</p></div>';
 		  return output;
 		}
 	
