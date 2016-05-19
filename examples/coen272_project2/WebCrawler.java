@@ -180,17 +180,51 @@ public class WebCrawler {
 							page.head().appendElement("meta").attr("property", "url").attr("content", url);
 						
 						// PHONEARENA.COM
-						page.head().appendElement("meta").attr("property", "brands").attr("content", "Samsung");
+						page.head().appendElement("meta").attr("property", "brands").attr("content", "Apple");
 						String text = page.body().text();
 						String camera = null;
-						if  (text.indexOf("Camera:") != -1)
+						String memory = null;
+						String price = null;
+						String display = null;
+						boolean found = false;	// check if specs page
+						if (text.indexOf("Camera:") != -1 && text.indexOf("megapixels") != -1)
 						{
 							 int index = text.indexOf("Camera:");
 							 camera = text.substring(index + "Camera:".length(), text.indexOf("megapixels", index));
 							 page.head().appendElement("meta").attr("property", "cameras").attr("content", camera.trim() + " MP");
+							 found = true;
 						}
-						else
-							page.head().appendElement("meta").attr("property", "cameras").attr("content", "None");
+						if (text.indexOf("Physical size:") != -1 && text.indexOf("inches") != -1)
+						{
+							int index = text.indexOf("Physical size:");
+							display = text.substring(index + "Physical size:".length(), text.indexOf("inches", index));
+							page.head().appendElement("meta").attr("property", "display").attr("content", display.trim() + " Inches");
+							found = true;
+						}
+						if (text.indexOf("heavier programs are running.") != -1 && text.indexOf("MB RAM") != -1)
+						{
+							int index = text.indexOf("heavier programs are running.");
+							memory = text.substring(index + "heavier programs are running.".length(), text.indexOf("MB RAM", index));
+							int mem = Integer.parseInt(memory.trim());
+							if (mem >= 1024)
+							{
+								mem /= 1024;
+								page.head().appendElement("meta").attr("property", "memory").attr("content", mem + " GB");
+							}
+							else
+								page.head().appendElement("meta").attr("property", "memory").attr("content", mem + " MB");
+							found = true;
+						}
+						if (text.indexOf("MSRP price:") != -1 && text.indexOf("$") != -1)
+						{
+							int index = text.indexOf("MSRP price:");
+							price = text.substring(text.indexOf("$", index), text.indexOf("$", index) + 5);
+							page.head().appendElement("meta").attr("property", "price").attr("content", price.trim());
+							found = true;
+						}
+						// go to next URL because this isn't a specifications page
+						if (!found)
+							continue;
 						
 						// get all textual content of the page
 						String textContent = page.outerHtml();

@@ -43,7 +43,7 @@ var Manager;
     	field: fields[i],
     	max_show: 10,
     	max_facets: 20,
-    	sort_type: 'lex' //possible values: 'range', 'lex', 'count'
+    	sort_type: 'count' //possible values: 'range', 'lex', 'count'
           }));
         }
     
