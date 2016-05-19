@@ -157,7 +157,7 @@ AjaxSolr.MultiSelectWidget = AjaxSolr.AbstractFacetWidget.extend({
 	});
     } else if (sort_type == 'lex') { //sort facets alphabetically
         objectedItems.sort(function (a, b) {
-          return a.facet < b.facet ? -1 : 1;
+        	return a.facet.localeCompare(b.facet, 'kn');
         });
     } else if (sort_type == 'count') { //the count in the current result set
         objectedItems.sort(function (a, b) {

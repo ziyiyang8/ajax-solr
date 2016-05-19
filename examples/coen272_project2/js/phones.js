@@ -35,21 +35,21 @@ var Manager;
     Manager.store.addByValue('q', '');
     Manager.doRequest();
 
-    var fields = [ 'brands', 'cameras' ];
+    var fields = [ 'brands', 'price', 'display', 'memory', 'cameras' ];
     for (var i = 0, l = fields.length; i < l; i++) {
-        Manager.addWidget(new AjaxSolr.MultiSelectWidget({ //MultiSelectWidget instead of Tagcloudwidget
+        Manager.addWidget(new AjaxSolr.MultiSelectWidget({ 
             id: fields[i],
             target: '#' + fields[i],
     	field: fields[i],
     	max_show: 10,
     	max_facets: 20,
-    	sort_type: 'count' //possible values: 'range', 'lex', 'count'
+    	sort_type: 'lex' //possible values: 'range', 'lex', 'count'
           }));
         }
     
     var params = {
     		  facet: true,
-    		  'facet.field': [ 'brands', 'cameras' ],
+    		  'facet.field': [ 'brands', 'price', 'display', 'memory', 'cameras' ],
     		  'facet.limit': 20,
     		  'facet.mincount': 1,
     		  'f.topics.facet.limit': 50,
