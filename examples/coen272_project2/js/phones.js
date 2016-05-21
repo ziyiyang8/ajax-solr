@@ -43,7 +43,7 @@ var Manager;
     	field: fields[i],
     	max_show: 10,
     	max_facets: 20,
-    	sort_type: 'count' //possible values: 'range', 'lex', 'count'
+    	sort_type: 'lex' //possible values: 'range', 'lex', 'count'
           }));
         }
     
@@ -57,8 +57,7 @@ var Manager;
     };
     for (var name in params) {
     	Manager.store.addByValue(name, params[name]);
-    }
-	
+    }	
    
   });
   

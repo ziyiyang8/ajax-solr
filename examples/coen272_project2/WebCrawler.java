@@ -87,9 +87,6 @@ public class WebCrawler {
 			// valid input file
 			if (fields.length >= 2 && fields.length <= 3)
 			{
-			    // add a '/' to end of url if it does not have it. This is to ensure our matching later is accurate
-//				if (fields[0].charAt(fields[0].length() -1) != '/')
-//					fields[0] = fields[0] + "/";
 				seeds.offer(fields[0]); // put first seed URL on queue
 				maxPages = Integer.parseInt(fields[1]); 
 				if (fields.length == 3) // a domain is specified
@@ -126,6 +123,11 @@ public class WebCrawler {
 			// if no valid url then stop crawl
 			if (url == null || url.length() == 0)
 				break;
+			// skip urls with # at end
+			if (url.charAt(url.length() - 1) == '#')
+				url = url.substring(0, url.length() - 1);
+			if (pagesVisited.contains(url))
+				continue;
 			// add url to our visited set
 			pagesVisited.add(url);
 			// only connect if safe to crawl based on robots.txt and our domain
@@ -179,50 +181,133 @@ public class WebCrawler {
 						if (!metaUrlFlag)
 							page.head().appendElement("meta").attr("property", "url").attr("content", url);
 						
-						// PHONEARENA.COM
-						page.head().appendElement("meta").attr("property", "brands").attr("content", "Apple");
+						// Get Brand of Phone
+						Element title = page.select("title").first();
+						String [] brand = title.text().split(" ");
+						page.head().appendElement("meta").attr("property", "brands").attr("content", brand[0]);
+						
 						String text = page.body().text();
 						String camera = null;
 						String memory = null;
 						String price = null;
 						String display = null;
-						boolean found = false;	// check if specs page
-						if (text.indexOf("Camera:") != -1 && text.indexOf("megapixels") != -1)
+						boolean found = false; // only get web page with phone specifications
+						
+						// PHONESCOOP.COM
+						if (text.indexOf("Camera Resolution:") != -1 && text.indexOf("megapixel") != -1)
 						{
-							 int index = text.indexOf("Camera:");
-							 camera = text.substring(index + "Camera:".length(), text.indexOf("megapixels", index));
-							 page.head().appendElement("meta").attr("property", "cameras").attr("content", camera.trim() + " MP");
-							 found = true;
-						}
-						if (text.indexOf("Physical size:") != -1 && text.indexOf("inches") != -1)
-						{
-							int index = text.indexOf("Physical size:");
-							display = text.substring(index + "Physical size:".length(), text.indexOf("inches", index));
-							page.head().appendElement("meta").attr("property", "display").attr("content", display.trim() + " Inches");
+							int index = text.indexOf("Camera Resolution:");
+							camera = text.substring(index + "Camera Resolution:".length(), text.indexOf("+", index));
+							page.head().appendElement("meta").attr("property", "cameras").attr("content", camera.trim());
+							System.out.println(camera);
 							found = true;
 						}
-						if (text.indexOf("heavier programs are running.") != -1 && text.indexOf("MB RAM") != -1)
+						if (text.indexOf("ppi)") != -1 && text.indexOf("diagonal") != -1)
 						{
-							int index = text.indexOf("heavier programs are running.");
-							memory = text.substring(index + "heavier programs are running.".length(), text.indexOf("MB RAM", index));
-							int mem = Integer.parseInt(memory.trim());
-							if (mem >= 1024)
+							int index = text.indexOf("ppi)");
+							display = text.substring(index + "ppi)".length(), text.indexOf("\"", index));
+							page.head().appendElement("meta").attr("property", "display").attr("content", display.trim());
+							System.out.println(display);
+							found = true;
+						}
+						if (text.indexOf("GB RAM") != -1 || text.indexOf("MB RAM") != -1)
+						{
+							if (text.indexOf("GB RAM") != -1)
 							{
-								mem /= 1024;
-								page.head().appendElement("meta").attr("property", "memory").attr("content", mem + " GB");
+								int index = text.indexOf("GB RAM");
+								memory = text.substring(index - 3, index).trim();
+								page.head().appendElement("meta").attr("property", "memory").attr("content", memory);
 							}
-							else
-								page.head().appendElement("meta").attr("property", "memory").attr("content", mem + " MB");
+							System.out.println(memory);
 							found = true;
 						}
-						if (text.indexOf("MSRP price:") != -1 && text.indexOf("$") != -1)
-						{
-							int index = text.indexOf("MSRP price:");
-							price = text.substring(text.indexOf("$", index), text.indexOf("$", index) + 5);
-							page.head().appendElement("meta").attr("property", "price").attr("content", price.trim());
-							found = true;
-						}
-						// go to next URL because this isn't a specifications page
+						
+						// GSMARENA.COM
+//						if (text.indexOf("Camera Primary") != -1 && text.indexOf("MP") != -1)
+//						{
+//							int index = text.indexOf("Camera Primary");
+//							if (text.indexOf("MP", index) != -1 && (text.indexOf("MP", index) - index < 20))
+//							{
+//								camera = text.substring(index + "Camera Primary".length(), text.indexOf("MP", index));
+//								page.head().appendElement("meta").attr("property", "cameras").attr("content", camera.trim());
+//								System.out.println(camera);
+//								found = true;
+//							}
+//						}
+//						if (text.indexOf("Size") != -1 && text.indexOf("inches") != -1)
+//						{
+//							int index = text.indexOf("Size");
+//							if (text.indexOf("inches", index) > 0)
+//							{
+//								display = text.substring(index + "Size".length(), text.indexOf("inches", index));
+//								page.head().appendElement("meta").attr("property", "display").attr("content", display.trim());
+//								System.out.println(display);
+//								found = true;
+//							}
+//						}
+//						if (text.indexOf("Internal") != -1 && (text.indexOf("GB RAM") != -1 || text.indexOf("MB RAM") != -1))
+//						{
+//							int index = text.indexOf("Internal");
+//							if (text.indexOf("GB RAM", index) != -1)
+//							{
+//								memory = text.substring(index + "Internal".length(), text.indexOf("GB RAM", index));
+//								memory = memory.substring(memory.indexOf(",") + 1).trim();
+//								page.head().appendElement("meta").attr("property", "memory").attr("content", memory);
+//							}
+//							found = true;
+//							System.out.println(memory);
+//						}
+//						if (text.indexOf("About") != -1 && text.indexOf("EUR") != -1)
+//						{
+//							int index = text.indexOf("About");
+//							price = text.substring(index + "About".length(), text.indexOf("EUR", index));
+//							page.head().appendElement("meta").attr("property", "price").attr("content", price.trim());
+//							System.out.println(price);
+//							found = true;
+//						}
+						
+						// PHONEARENA.COM
+//						if (text.indexOf("Camera:") != -1 && text.indexOf("megapixels") != -1)
+//						{
+//							 int index = text.indexOf("Camera:");
+//							 if (text.indexOf("megapixels", index) != -1)
+//							 {
+//								 camera = text.substring(index + "Camera:".length(), text.indexOf("megapixels", index));
+//								 page.head().appendElement("meta").attr("property", "cameras").attr("content", camera.trim());
+//								 found = true;	
+//								 System.out.println(camera.trim());
+//							 }
+//						}
+//						if (text.indexOf("Physical size:") != -1 && text.indexOf("inches") != -1)
+//						{
+//							int index = text.indexOf("Physical size:");
+//							display = text.substring(index + "Physical size:".length(), text.indexOf("inches", index));
+//							page.head().appendElement("meta").attr("property", "display").attr("content", display.trim());
+//							found = true;
+//							System.out.println(display.trim());
+//						}
+//						if (text.indexOf("heavier programs are running.") != -1 && text.indexOf("MB RAM") != -1)
+//						{
+//							int index = text.indexOf("heavier programs are running.");
+//							memory = text.substring(index + "heavier programs are running.".length(), text.indexOf("MB RAM", index));
+//							int mem = Integer.parseInt(memory.trim());
+//							if (mem >= 1024)
+//							{
+//								mem /= 1024;
+//								page.head().appendElement("meta").attr("property", "memory").attr("content", mem + "");
+//							}
+//							found = true;
+//							System.out.println(mem);
+//						}
+//						if (text.indexOf("MSRP price:") != -1 && text.indexOf("$") != -1)
+//						{
+//							int index = text.indexOf("MSRP price:");
+//							price = text.substring(text.indexOf("$", index) + 1, text.indexOf("$", index) +  5);
+//							page.head().appendElement("meta").attr("property", "price").attr("content", price.trim());
+//							found = true;
+//							System.out.println(price);
+//						}
+						
 						if (!found)
 							continue;
 						
@@ -334,6 +419,16 @@ public class WebCrawler {
 	 */
 	private boolean domainSafe(String url)
 	{
+		// special case for crawling PHONEARENA.COM
+		if (url.contains("www.phonearena.com/phones/manufacturers/Apple"))
+			return true;
+		
+		// special case for crawling PHONESCOOP.COM
+		if (url.contains("www.phonescoop.com/phones/manufacturer.php?m=152"))
+			return true;
+		if (url.contains("www.phonescoop.com") && (url.contains("&fs") || url.contains("&gi") || url.contains("#modal")))
+			return false;
+			
 		// no domain specified then always return true;
 		if (domain == null || domain.length() == 0)
 			return true;

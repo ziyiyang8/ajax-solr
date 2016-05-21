@@ -157,7 +157,7 @@ AjaxSolr.MultiSelectWidget = AjaxSolr.AbstractFacetWidget.extend({
 	});
     } else if (sort_type == 'lex') { //sort facets alphabetically
         objectedItems.sort(function (a, b) {
-          return a.facet < b.facet ? -1 : 1;
+          return a.facet - b.facet;
         });
     } else if (sort_type == 'count') { //the count in the current result set
         objectedItems.sort(function (a, b) {
@@ -292,7 +292,15 @@ AjaxSolr.MultiSelectWidget = AjaxSolr.AbstractFacetWidget.extend({
 	   $('<input type=checkbox id="' + this.field + '_' + facet + '_checkbox"' + checked_txt + '></input>')
 	   .change(this.checkboxChange(facet))
 	  );
+	  if (this.field == 'price')
+		  $(this.target).append($('<span style="padding-left: 2px; font-size: small"></span>').text('$'));
 	  $(this.target).append($('<span style="padding-left: 2px; font-size: small"></span>').text(facet));
+	  if (this.field == 'display')
+		  $(this.target).append($('<span style="padding-left: 2px; font-size: small"></span>').text(' Inches'));
+	  else if (this.field == 'memory')
+		  $(this.target).append($('<span style="padding-left: 2px; font-size: small"></span>').text(' GB'));
+	  else if (this.field == 'cameras')
+		  $(this.target).append($('<span style="padding-left: 2px; font-size: small"></span>').text(' MP'));
 	  if (cur_facet_count != 0) {
 	      $(this.target).append($('<span style="font-size: x-small"></span>').text(' (' + cur_facet_count + ')'));
 	  }
@@ -311,7 +319,15 @@ AjaxSolr.MultiSelectWidget = AjaxSolr.AbstractFacetWidget.extend({
 	   $('<input type=checkbox id="' + this.field + '_' + facet + '_checkbox"' + checked_txt + '></input>')
 	   .change(this.checkboxChange(facet))
 	  );
+	  if (this.field == 'price')
+		  $('#' + show_more_div_id).append($('<span style="padding-left: 2px; font-size: small"></span>').text('$'));
 	  $('#' + show_more_div_id).append($('<span style="padding-left: 2px; font-size: small"></span>').text(facet));
+	  if (this.field == 'display')
+		  $('#' + show_more_div_id).append($('<span style="padding-left: 2px; font-size: small"></span>').text(' Inches'));
+	  else if (this.field == 'memory')
+		  $('#' + show_more_div_id).append($('<span style="padding-left: 2px; font-size: small"></span>').text(' GB'));
+	  else if (this.field == 'cameras')
+		  $('#' + show_more_div_id).append($('<span style="padding-left: 2px; font-size: small"></span>').text(' MP'));
 	  if (cur_facet_count != 0) {
 	      $('#' + show_more_div_id).append($('<span style="font-size: x-small"></span>').text(' (' + cur_facet_count + ')'));
 	  }
@@ -321,13 +337,14 @@ AjaxSolr.MultiSelectWidget = AjaxSolr.AbstractFacetWidget.extend({
 
     }
 
-//    var ac_id = this.field + '_all_extra';
-//    if (num_hidden > 0) {
-//	$('#' + show_more_div_id).append('Or search: ');
-//	$('#' + show_more_div_id).append($('<input id="' + ac_id + '">'));
-//	var more_or_less_txt = (this.display_style == 'none') ? '+more' : '-less';
-//	$(this.target).append('<a id="' + show_more_div_id + '_txt" href="#">' + more_or_less_txt + '</a>');
-//	$('#' + show_more_div_id + '_txt').click(this.toggleExtra(show_more_div_id));
+    //var ac_id = this.field + '_all_extra';
+    if (num_hidden > 0) {
+    	//$('#' + show_more_div_id).append('Or search: ');
+    	//$('#' + show_more_div_id).append($('<input id="' + ac_id + '">'));
+    	var more_or_less_txt = (this.display_style == 'none') ? '+more' : '-less';
+    	$(this.target).append('<a id="' + show_more_div_id + '_txt" href="#">' + more_or_less_txt + '</a>');
+    	$('#' + show_more_div_id + '_txt').click(this.toggleExtra(show_more_div_id));
+    }
 //    } else {
 //	$(this.target).append('Or search: ');
 //	$(this.target).append($('<input id="' + ac_id + '">'));
