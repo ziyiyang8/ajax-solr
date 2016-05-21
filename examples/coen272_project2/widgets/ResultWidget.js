@@ -17,7 +17,9 @@ AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
 			  snippet = "";
 		  else
 			  snippet = doc.description.toString().substring(0,150);
-			
+		if (doc.description.toString().length > 150)
+			snippet += " ...";
+		  
 		  var output = '<div><h2><a href=' + doc.url + ' target="_blank"' + '\>' + doc.title + '</a></h2>';
 		  //output += '<p id="links_' + doc.id + '" class="links"></p>';
 		  output += '<a href=' + doc.url + ' target="_blank"' + '\>' + doc.url + '</a>';
