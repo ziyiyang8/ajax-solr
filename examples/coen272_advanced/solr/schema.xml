@@ -121,6 +121,11 @@
     <field name="_version_" type="long" indexed="true" stored="false"/>
     <field name="_root_" type="string" indexed="true" stored="false" docValues="false" />
     <field name="_text_" type="text_general" indexed="true" stored="false" multiValued="true"/>
+    <field name="brands" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="cameras" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="display" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="price" type="string" indexed="true" stored="false" multiValued="true"/>
+    <field name="memory" type="string" indexed="true" stored="false" multiValued="true"/>
     <copyField source="*" dest="_text_"/>
 
 
@@ -200,11 +205,13 @@
     <copyField source="content_type" dest="_text_"/>
     <copyField source="resourcename" dest="_text_"/>
     <copyField source="url" dest="_text_"/>
+
+    <!--
     <copyField source="brands" dest="_text_"/>
     <copyField source="cameras" dest="_text_"/>
     <copyField source="memory" dest="_text_"/>
     <copyField source="display" dest="_text_"/>
-    <copyField source="price" dest="_text_"/>
+    <copyField source="price" dest="_text_"/> -->
 
     <!-- field type definitions. The "name" attribute is
        just a label to be used by field definitions.  The "class"
